@@ -50,10 +50,17 @@
               ''
                 set -euo pipefail
 
-                # yolo under general, Gemini's own sandbox off, policy referenced
-                jq -e '.general.defaultApprovalMode == "yolo"' "$geminiSettingsPath"
+                # Own sandbox off, policy referenced, auth pinned so a
+                # headless run does not stop at the interactive picker.
                 jq -e '.tools.sandbox == false' "$geminiSettingsPath"
                 jq -e '.policyPaths | length == 1' "$geminiSettingsPath"
+                jq -e '.security.auth.selectedType == "oauth-personal"' "$geminiSettingsPath"
+
+                # ASSERT ABSENT, not present: gemini-cli 0.53 hard-errors on
+                # general.defaultApprovalMode = "yolo" (invalid enum) and
+                # refuses to start, so rendering it would break the tool.
+                # This check previously REQUIRED the key.
+                jq -e '.general.defaultApprovalMode == null' "$geminiSettingsPath"
 
                 # Policy Engine TOML: deny rules from the shared list
                 grep -q 'commandPrefix = "gh repo delete"' "$geminiPolicyTomlPath"
