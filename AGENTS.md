@@ -1,3 +1,6 @@
+---
+skill-groups: [core, nix]
+---
 # nix-agy - AI Agent Instructions
 
 All agy / Gemini-CLI-specific Nix config. Stranger-consumable: every input is
