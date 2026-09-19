@@ -28,8 +28,6 @@
 
       settingsPolicy = import ./lib/settings-policy.nix;
 
-      validateSettings = args: import ./lib/validate-settings.nix ({ inherit schemaFile; } // args);
-
       # Fixture deny list for the check. Consumers pass their own; this only
       # has to exercise the renderer.
       fixtureDeny = [
@@ -40,7 +38,7 @@
     in
     {
       lib = {
-        inherit settingsPolicy validateSettings;
+        inherit settingsPolicy;
         renderAutonomous = import ./lib/render-autonomous.nix;
       };
 
@@ -64,18 +62,7 @@
             inherit (pkgs) lib;
             residualDeny = fixtureDeny;
           };
-          validator = validateSettings {
-            inherit pkgs;
-            validateSchema = true;
-          };
-          validationChecks = import ./lib/checks.nix {
-            inherit pkgs fixtureDeny;
-            validator = validateSettings {
-            inherit pkgs;
-            validateSchema = true;
-          };
-            renderAutonomous = self.lib.renderAutonomous;
-          };
+          validationChecks = import ./lib/checks.nix { inherit pkgs settingsPolicy; };
         in
         {
           autonomous-profile-render =
@@ -83,7 +70,7 @@
               {
                 nativeBuildInputs = [
                   pkgs.jq
-                  validator
+                  pkgs.check-jsonschema
                 ];
                 inherit (render) geminiPolicyToml;
                 geminiSettings = render.geminiSettingsJson;
@@ -95,12 +82,7 @@
               ''
                 set -euo pipefail
 
-                autonomous="$TMPDIR/autonomous-settings.json"
-                cp "$geminiSettingsPath" "$autonomous"
-                baseline="$TMPDIR/baseline-settings.json"
-                cp "$geminiSettingsPath" "$baseline"
-
-                ${validator}/bin/validate-gemini-settings "$autonomous" "$baseline"
+                check-jsonschema --schemafile "${schemaFile}" "$geminiSettingsPath"
 
                 # Own sandbox off, policy referenced, auth pinned so a
                 # headless run does not stop at the interactive picker.

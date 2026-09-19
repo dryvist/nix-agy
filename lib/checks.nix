@@ -1,63 +1,28 @@
-# Flake checks for settings validation.
+# Flake checks for the settings policy. Pure Nix: the policy predicate
+# (lib/settings-policy.nix) fires an `assert` at evaluation time, so a
+# violation fails `nix flake check` with the policy message — no shell.
 {
   pkgs,
-  validator,
-  renderAutonomous,
-  fixtureDeny,
+  settingsPolicy,
 }:
 let
-  inherit (pkgs) lib;
-  render = renderAutonomous {
-    inherit (pkgs) lib;
-    residualDeny = fixtureDeny;
+  forbidden = settingsPolicy.forbiddenModelNames;
+
+  # Force the assertion inside assertModelName so tryEval can observe a
+  # thrown `assert` rather than returning a lazily-unevaluated attrset.
+  checkPolicy = settings: builtins.deepSeq (settingsPolicy.assertModelName forbidden settings) true;
+
+  cleanSettings = { };
+  routerRoleSettings = {
+    model.name = builtins.elemAt forbidden 0;
   };
-
-  autonomousSettings = pkgs.writeText "autonomous-settings.json" render.geminiSettingsJson;
-
-  autonomousParsed = builtins.fromJSON render.geminiSettingsJson;
-  invalidSubagentSettings = pkgs.writeText "invalid-subagent-settings.json" (
-    builtins.toJSON (
-      autonomousParsed
-      // {
-        model = {
-          name = "subagent";
-        };
-      }
-    )
-  );
-
-  runValidator =
-    name: target: baseline: expectSuccess: repairLegacy:
-    pkgs.runCommand name
-      {
-        nativeBuildInputs = [ validator ];
-      }
-      ''
-        set -euo pipefail
-        export REPAIR_LEGACY="${if repairLegacy then "1" else "0"}"
-        if ${validator}/bin/validate-gemini-settings "${target}" "${baseline}"; then
-          rc=0
-        else
-          rc=1
-        fi
-        if [[ ${if expectSuccess then "true" else "false"} == "true" ]]; then
-          [[ "$rc" -eq 0 ]] || exit 1
-        else
-          [[ "$rc" -ne 0 ]] || exit 1
-        fi
-        touch "$out"
-      '';
 in
 {
-  settings-validation-autonomous =
-    runValidator "check-settings-autonomous" autonomousSettings autonomousSettings true
-      false;
+  settings-policy-accepts-clean =
+    assert (builtins.tryEval (checkPolicy cleanSettings)).success;
+    pkgs.runCommand "settings-policy-accepts-clean" { } "touch $out";
 
-  settings-validation-negative-subagent =
-    runValidator "check-settings-negative-subagent" invalidSubagentSettings autonomousSettings false
-      false;
-
-  settings-validation-positive-baseline =
-    runValidator "check-settings-positive-baseline" autonomousSettings autonomousSettings true
-      false;
+  settings-policy-rejects-router-role =
+    assert !(builtins.tryEval (checkPolicy routerRoleSettings)).success;
+    pkgs.runCommand "settings-policy-rejects-router-role" { } "touch $out";
 }
