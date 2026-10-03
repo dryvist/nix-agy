@@ -41,6 +41,7 @@
     {
       lib = {
         inherit settingsPolicy validateSettings;
+        mkLauncher = import ./lib/mk-launcher.nix;
         renderAutonomous = import ./lib/render-autonomous.nix;
       };
 
@@ -71,13 +72,17 @@
           validationChecks = import ./lib/checks.nix {
             inherit pkgs fixtureDeny;
             validator = validateSettings {
-            inherit pkgs;
-            validateSchema = true;
-          };
+              inherit pkgs;
+              validateSchema = true;
+            };
             renderAutonomous = self.lib.renderAutonomous;
           };
         in
         {
+          launcher = import ./checks/launcher.nix {
+            inherit pkgs;
+            inherit (self.lib) mkLauncher;
+          };
           autonomous-profile-render =
             pkgs.runCommand "autonomous-profile-render"
               {
