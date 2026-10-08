@@ -1,0 +1,23 @@
+name: Nix CI
+
+on:
+  pull_request:
+  push:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    uses: dryvist/.github/.github/workflows/_nix-validate.yml@c6bcb592e504dc190ae86e4b6ad596cee4261a2a # main
+    with:
+      runner_label: ubuntu-latest
+      all_systems: false
+
+  macos:
+    needs: linux
+    uses: dryvist/.github/.github/workflows/_nix-validate.yml@c6bcb592e504dc190ae86e4b6ad596cee4261a2a # main
+    with:
+      runner_label: macos-latest
+      all_systems: false
