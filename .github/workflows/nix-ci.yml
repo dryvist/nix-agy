@@ -10,14 +10,14 @@ permissions:
 
 jobs:
   linux:
-    uses: dryvist/.github/.github/workflows/_nix-validate.yml@6d4a39e4006e374803b7a0794148575b8bfc9be1 # v1.14.0
+    uses: dryvist/.github/.github/workflows/_nix-validate.yml@74e4e37bd0c362dd145ad0537361084336c8ff55 # v1.14.1
     with:
       runner_label: ubuntu-latest
       all_systems: false
 
   macos:
     needs: linux
-    uses: dryvist/.github/.github/workflows/_nix-validate.yml@6d4a39e4006e374803b7a0794148575b8bfc9be1 # v1.14.0
+    uses: dryvist/.github/.github/workflows/_nix-validate.yml@74e4e37bd0c362dd145ad0537361084336c8ff55 # v1.14.1
     with:
       runner_label: macos-latest
       all_systems: false
