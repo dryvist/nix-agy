@@ -18,7 +18,7 @@
 
 ```nix
 {
-  inputs.nix-agy.url = "github:dryvist/nix-agy";
+  inputs.nix-agy.url = "github:dryvist/nix-agy?ref=vN";
 }
 ```
 
