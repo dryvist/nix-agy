@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/dryvist/nix-agy/compare/v1.0.0...v1.0.1) (2026-10-17)
+
+
+### Bug Fixes
+
+* **devshell:** use the system git instead of a pinned git ([3e0d82e](https://github.com/dryvist/nix-agy/commit/3e0d82e5be338726ebccbc7d2f163da535f0b993))
+* **devshell:** use the system git instead of a pinned git ([#59](https://github.com/dryvist/nix-agy/issues/59)) ([379e332](https://github.com/dryvist/nix-agy/commit/379e332c391812ca9bd6703aa23d093d59c67e70))
+
 ## 1.0.0 (2026-10-11)
 
 
