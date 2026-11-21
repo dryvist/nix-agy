@@ -3,11 +3,11 @@
     "gemini-cli": {
       "flake": false,
       "locked": {
-        "lastModified": 1794599380,
-        "narHash": "sha256-YC5SCJbzkbbwKXLcY5p/LVxZlYKpXlqpUzhGJJ1Y2SY=",
+        "lastModified": 1795202345,
+        "narHash": "sha256-N9Kl060NdSKvhn0PXrrQqLsW94prkKbTLWWAKy5ZLFo=",
         "owner": "google-gemini",
         "repo": "gemini-cli",
-        "rev": "4ed06ed0ddc523a6d356a4ad35ddfea331041888",
+        "rev": "eecccfcd5aff25de5e78135ca20f7abe3f566955",
         "type": "github"
       },
       "original": {
@@ -18,11 +18,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1794386569,
-        "narHash": "sha256-x9sADJvoVG0L6RejZB+/BB4YiGZFBZrfTlhF4uBq1tQ=",
+        "lastModified": 1795085501,
+        "narHash": "sha256-S5keGWzaKpuXo9MNoIC2FfTIuTyTnx8P4NhYJMEsTLI=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "d4f25a3e562008648d45bcf2d70bcc7422cad84e",
+        "rev": "0bb8272318b4ca41bf0edc6224df3e3e3046b70d",
         "type": "github"
       },
       "original": {
